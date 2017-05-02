@@ -1,3 +1,4 @@
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -33,41 +34,48 @@ public class Main {
 		list.add(new SalesTransactions(new Date(117, 1, 5), "Shoes", 10, 99.99));
 		list.add(new SalesTransactions(new Date(117, 7, 7), "Shirt", 3, 9.99));
 		list.add(new SalesTransactions(new Date(117, 3, 20), "Pants", 7, 39.99));
+		list.add(new SalesTransactions(new Date(117, 2, 20), "Pants", 7, 39.99));
 
 		addSalesTransactions(sessionFactory, list);
 
-		//find sales transaction that happened on Date(110, 1, 1)
+		// find sales transaction that happened on Date(110, 1, 1)
 		Date date = new Date(110, 1, 1);
 		SingleTransaction(sessionFactory, date);
-		
-		//Retrieve sales transactions for a given product over a given time interval
-		//in this case (100, 1, 1) and (105, 11, 20)
+
+		// Retrieve sales transactions for a given product over a given time
+		// interval
+		// in this case (100, 1, 1) and (105, 11, 20)
 		Date date1 = new Date(100, 1, 1);
 		Date date2 = new Date(105, 11, 20);
 		ProductOverTimeInterval(sessionFactory, date1, date2);
-		
-		//aggregate operation on sales transaction objects
+
+		// aggregate operation on sales transaction objects
 		AggregateOperation(sessionFactory, "Pants");
 	}
 
 	/**
-	 * aggregate operation on sales transaction objects
-	 * How much sales of a given product item were in the last month 
+	 * aggregate operation on sales transaction objects How much sales of a
+	 * given product item
 	 * 
 	 * @param sessionFactory: creating hibernate sessions to query
 	 * @param productName: name of product
 	 */
-	public static void AggregateOperation(SessionFactory sessionFactory, String productName) {
+	public static void AggregateOperation(SessionFactory sessionFactory,
+			String productName) {
 		Session session = sessionFactory.openSession();
-		String hql = "SELECT count(s.productName) FROM sales s WHERE s.Date BETWEEN (CURRENT_DATE() - INTERVAL 1 MONTH) AND CURRENT_DATE() AND ProductName = :ProductName";
+		String hql = "SELECT count(sales.ProductName) FROM Sales sales WHERE sales.ProductName = :ProductName";
 		Query query = session.createQuery(hql);
 		query.setParameter("ProductName", productName);
 		List results = query.list();
-		System.out.println(results.get(0));
-		
+		System.out.println("Aggregation Operation, How much sales of "
+				+ productName + ":");
+		Number number = (Number) results.get(0);
+		System.out.println(number.intValue());
+
 		session.close();
+
 	}
-	
+
 	/**
 	 * find sales transactions between two time intervals
 	 * 
@@ -83,6 +91,10 @@ public class Main {
 		query.setParameter("date1", date1);
 		query.setParameter("date2", date2);
 		List<SalesTransactions> result = query.list();
+
+		System.out.println("Product Over Time Interval "
+				+ new SimpleDateFormat("yyyy-MM-dd").format(date1) + " and "
+				+ new SimpleDateFormat("yyyy-MM-dd").format(date2) + ":");
 		print(session, query.list());
 	}
 
@@ -98,10 +110,12 @@ public class Main {
 		String hql = "FROM Sales WHERE Date = :Date";
 		Query query = session.createQuery(hql);
 		query.setParameter("Date", date);
+		System.out.println("Single Transaction on "
+				+ new SimpleDateFormat("yyyy-MM-dd").format(date) + ":");
 		print(session, query.list());
-		
+
 	}
-	
+
 	/**
 	 * prints the result list on the queries
 	 * 
@@ -110,12 +124,15 @@ public class Main {
 	 */
 	public static void print(Session session, List<SalesTransactions> result) {
 		SalesTransactions salesTransaction = null;
-		for(SalesTransactions s: result) {
-			System.out.println(s.getProductName());
+		for (SalesTransactions s : result) {
+			System.out.println("SalesTransaction: " + "Date = " + s.getDate()
+					+ " ProductName: " + s.getProductName() + " Quantity: "
+					+ s.getQuantity() + " UnitCost: " + s.getUnitCost()
+					+ " TotalCost: " + s.getTotalCost());
 		}
 		session.close();
 	}
-	
+
 	/**
 	 * adds sales transactions to sales table
 	 * 
@@ -140,5 +157,5 @@ public class Main {
 			session.close();
 		}
 	}
-	
+
 }

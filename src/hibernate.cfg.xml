@@ -28,6 +28,5 @@
    <!-- automatically creates the sales table mapped in SalesTransactions.java -->
    <property name="hbm2ddl.auto">create</property>
    
-   <property name="show_sql">true</property>
 </session-factory>
 </hibernate-configuration>

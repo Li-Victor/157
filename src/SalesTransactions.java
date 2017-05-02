@@ -7,7 +7,7 @@ public class SalesTransactions {
 	@Id
 	@Column(name = "Date")
 	@Temporal(TemporalType.DATE)
-	private Date date;
+	private Date Date;
 
 	@Column(name = "ProductName")
 	private String ProductName;
@@ -22,11 +22,11 @@ public class SalesTransactions {
 	private double TotalCost;
 
 	public Date getDate() {
-		return date;
+		return Date;
 	}
 
-	public void setDate(Date date) {
-		this.date = date;
+	public void setDate(Date Date) {
+		this.Date = Date;
 	}
 
 	public String getProductName() {
@@ -64,9 +64,9 @@ public class SalesTransactions {
 	public SalesTransactions() {
 	}
 
-	public SalesTransactions(Date date, String ProductName, int Quantity,
+	public SalesTransactions(Date Date, String ProductName, int Quantity,
 			double UnitCost) {
-		this.date = date;
+		this.Date = Date;
 		this.ProductName = ProductName;
 		this.Quantity = Quantity;
 		this.UnitCost = UnitCost;
